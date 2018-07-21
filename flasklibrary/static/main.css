@@ -1,0 +1,18 @@
+.content-section {
+	background: #ffffff;
+	padding: 18px 20px;
+	border: 1px solid #dddddd;
+	border-radius: 3px;
+	margin-bottom: 20px;
+}
+
+.book-cover-img {
+	width: 100px;
+	margin-right: 16px;
+}
+
+.avatar-img {
+	height: 65px;
+	width: 65px;
+	margin-right: 16px;
+}

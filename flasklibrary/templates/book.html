@@ -1,0 +1,38 @@
+{% extends "layout.html" %}
+{% block content %}
+	<div class="media content-section">
+		<img class="book-cover-img" src="{{ url_for('static', filename='covers/' + book.cover )}}" alt="{{ book.title }}">
+		<div class="media-body">
+			<h5 class="mt-0">
+				{{ book.title }}
+				<small class="text-muted">by {{ book.author }}</small>
+			</h5>
+			<div>
+				<a class="btn btn-secondary btn-sm m-1" href="{{ url_for('books.update_book', book_id=book.id)}}">Update</a>
+				<button type="button" class="btn btn-danger btn-sm m-1" data-toggle="modal" data-target="#deleteModal">Delete</button>
+			</div>
+		</div>
+	</div>
+	<!-- Modal -->
+	<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="deleteModalLabel">Delete Book?</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					Are you sure you want to delete <b>{{ book.title }}</b> from your library?
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+					<form action="{{ url_for('books.delete_book', book_id=book.id) }}" method="POST">
+						<input type="submit" class='btn btn-danger' value='Delete'>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+{% endblock content %}
