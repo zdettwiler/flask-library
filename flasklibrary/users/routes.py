@@ -3,6 +3,7 @@ from flasklibrary import db, bcrypt
 from flask_login import login_user, logout_user, current_user, login_required
 from flasklibrary.models import User, Book
 from flasklibrary.users.forms import RegistrationForm, LoginForm, UpdateAccountForm, RequestResetForm, ResetPasswordForm
+from flasklibrary.users.utils import send_reset_email
 
 users = Blueprint('users', __name__)
 
@@ -77,6 +78,11 @@ def request_reset_password():
 		return redirect(url_for('main.home'))
 
 	form =	RequestResetForm()
+	if form.validate_on_submit():
+		user = User.query.filter_by(email=form.email.data).first()
+		send_reset_email(user)
+		flash('An email has been sent with a link to reset your password', 'info')
+		return redirect(url_for('users.login'))
 
 	return render_template('request_reset_password.html', title='Reset Password', form=form)
 
@@ -88,8 +94,16 @@ def reset_password(token):
 	user = User.verify_reset_token(token)
 	if user is None:
 		flash('Invalid or expired token', 'warning')
-		return redirect(url_for('reset_password'))
+		return redirect(url_for('users.reset_password'))
 
 	form =	ResetPasswordForm()
+
+	if form.validate_on_submit():
+		hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
+		user.password = hashed_password
+		db.session.commit()
+
+		flash('Your password has been updated! You can now log in with the new password!', 'success')
+		return redirect(url_for('users.login'))
 
 	return render_template('reset_password.html', title='Reset Password', form=form)
