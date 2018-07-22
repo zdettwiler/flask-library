@@ -2,7 +2,7 @@ from flask import Blueprint, render_template, url_for, flash, redirect, request
 from flasklibrary import db, bcrypt
 from flask_login import login_user, logout_user, current_user, login_required
 from flasklibrary.models import User, Book
-from flasklibrary.users.forms import RegistrationForm, LoginForm, UpdateAccountForm
+from flasklibrary.users.forms import RegistrationForm, LoginForm, UpdateAccountForm, RequestResetForm, ResetPasswordForm
 
 users = Blueprint('users', __name__)
 
@@ -63,9 +63,19 @@ def account():
 		db.session.commit()
 		flash('Your account has been successfully updated', 'success')
 		return redirect(url_for('users.account'))
-		
+
 	elif request.method =='GET':
 		form.username.data = current_user.username
 		form.email.data = current_user.email
 
 	return render_template('account.html', title='Account', form=form)
+
+
+@users.route('/reset-password', methods=['GET', 'POST'])
+def request_reset_password():
+	if current_user.is_authenticated:
+		return redirect(url_for('main.home'))
+
+	form =	RequestResetForm()
+
+	return render_template('request_reset_password.html', title='Reset Password', form=form)
